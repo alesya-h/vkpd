@@ -11,7 +11,7 @@ class VKPD < Sinatra::Base
   end
 
   get '/' do
-    redirect auth_url(APP_ID,"audio,offline","#{request.host}:#{request.port}/return","page")
+    redirect auth_url(APP_ID,"audio,offline","localhost.localdomain:#{request.port}/return","page")
   end
 
   get '/return' do
