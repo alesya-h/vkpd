@@ -1,5 +1,8 @@
 vkpd [options] [search request]
 
+Requirements:
+   vkpd requires mpc to work and sinatra to authenticate
+
 Options:
 
   -c, --count=n
