@@ -10,9 +10,6 @@ params = {}
 action_before = 'mpc clear'
 action_after  = 'mpc play'
 
-config = YAML.load File.read("#{ENV['HOME']}/.config/vkpd.yaml")
-params["access_token"]=config["access_token"]
-
 if ARGV.empty?
   ARGV.push "-h"
 end
@@ -98,6 +95,9 @@ unless File.exist? "#{ENV['HOME']}/.config/vkpd.yaml"
   puts 'Please authenticate. Start vkpd-auth.rb and point your browser to http://localhost.local:4567/'
   exit 1
 end
+
+config = YAML.load File.read("#{ENV['HOME']}/.config/vkpd.yaml")
+params["access_token"]=config["access_token"]
 
 connection=Net::HTTP.new("api.vkontakte.ru",443)
 connection.use_ssl=true
