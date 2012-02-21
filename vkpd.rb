@@ -9,6 +9,7 @@ method = "audio.search"
 params = {}
 action_before = 'mpc clear'
 action_after  = 'mpc play'
+params["auto_complete"] = '1'
 
 if ARGV.empty?
   ARGV.push "-h"
@@ -77,8 +78,8 @@ EOF
   when 'add'
     action_before = ''
     action_after = ''
-  when '-f','--fix'
-    params["auto_complete"] = '1'
+  when '-nf','--no-fix', '--exact'
+    params["auto_complete"] = '0'
   when 'play'
     # do nothing
   else
