@@ -92,7 +92,7 @@ def hash_to_params(hash)
 end
 
 unless File.exist? "#{ENV['HOME']}/.config/vkpd.yaml"
-  puts 'Please authenticate. Start vkpd-auth.rb and point your browser to http://localhost.local:4567/'
+  puts 'Please authenticate. Start vkpd-auth.rb and point your browser to http://localhost.localdomain:4567/'
   exit 1
 end
 
