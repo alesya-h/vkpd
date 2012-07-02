@@ -11,8 +11,8 @@ Options:
        Drop first n results
   -s, --sort=n
        Sort by: 0 - popularity, 1 - length, 2 - upload date
-  -f, --fix
-       Try to fix typos
+  -nf, --no-fix, --exact
+       Do not try to fix typos
   user [user_id]
        Load user songs. If user_id not supplied use current user's id
   group <group_id>
@@ -32,6 +32,6 @@ Some examples:
         vkpd user # current user's songs
         vkpd user -c 1 # current user's last added song
         vkpd group 1 # plays songs from group with id = 1
-        vkpd --fix Beetles # fixes typo and plays The Beatles
-        vkpd -f Beetles # same as above
+        vkpd --no-fix Beetles # prevents from searching for Beatles
+        vkpd -nf Beetles # same as above
         vkpd -s 1 Beatles # sorted by length. 0 to sort by popularity, 2 to sort by upload date
