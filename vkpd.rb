@@ -31,6 +31,8 @@ current = ARGV.shift
     filename = `dirname #{`readlink -f #{$0}`}`.chomp+"/README"
     puts File.read(filename)
     exit 0
+  when '-d', '--debug', /^--count=\d+$/
+    $debug  = true
   when '-c', '--count', /^--count=\d+$/
     value = current.include?("=") ? current.match(/=(.*)/)[1] : ARGV.shift
     params["count"]  = value
@@ -63,6 +65,14 @@ current = ARGV.shift
   end
 end
 
+def run(*args)
+  if $debug
+    puts(*args)
+  else
+    system(*args)
+  end
+end
+
 def hash_to_params(hash)
   hash.map{|k,v| "#{k}=#{CGI.escape(v.to_s)}"}.join("&")
 end
@@ -76,8 +86,8 @@ response = JSON.parse(data)["response"]
 if method.match /search/
   response.shift
 end
-system action_before
+run action_before
 response.each do |song|
-  system "mpc add #{song["url"]}"
+  run "mpc add #{song["url"]}"
 end
-system action_after
+run action_after
