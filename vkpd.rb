@@ -31,7 +31,7 @@ current = ARGV.shift
     filename = `dirname #{`readlink -f #{$0}`}`.chomp+"/README"
     puts File.read(filename)
     exit 0
-  when '-d', '--debug', /^--count=\d+$/
+  when '-d', '--debug'
     $debug  = true
   when '-c', '--count', /^--count=\d+$/
     value = current.include?("=") ? current.match(/=(.*)/)[1] : ARGV.shift
