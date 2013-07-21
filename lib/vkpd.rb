@@ -1,11 +1,12 @@
 # -*- coding: utf-8; mode: ruby -*-
-require "net/http"
-require "net/https"
-require "cgi"
-require "yaml"
-require "json"
-require "pathname"
-require "sinatra/base"
+require 'net/http'
+require 'net/https'
+require 'cgi'
+require 'yaml'
+require 'json'
+require 'pathname'
+require 'sinatra/base'
+require 'ruby-mpd'
 require 'vkpd/version'
 require 'vkpd/cli'
 require 'vkpd/auth'

@@ -11,10 +11,12 @@ module Vkpd
   
     # main CLI method
     def main
+      mpd = MPD.new 'localhost'
+      mpd.connect
       method = "audio.search"
       params = {}
-      action_before = 'mpc clear'
-      action_after  = 'mpc play'
+      do_clear = true
+      do_play = true
       params["auto_complete"] = '1'
   
       if ARGV.empty?
@@ -50,8 +52,8 @@ module Vkpd
           method = 'audio.get'
           params['gid'] = ARGV.shift
         when 'add'
-          action_before = ''
-          action_after = ''
+          do_clear = false
+          do_play = false
         when '-nf','--no-fix', '--exact'
           params["auto_complete"] = '0'
         when 'auth'
@@ -74,11 +76,11 @@ module Vkpd
       if method.match /search/
         response.shift
       end
-      run action_before
+      mpd.clear if do_clear
       response.each do |song|
-        run "mpc add #{song["url"]}"
+        mpd.add song["url"]
       end
-      run action_after
+      mpd.play if do_play
     end
 
     private
