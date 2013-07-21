@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+require 'vkpd'
+Vkpd::CLI.new.main
