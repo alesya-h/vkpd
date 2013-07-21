@@ -1,12 +1,16 @@
+#VKPD
+
+VKPD searches for music on social network vk.com and adds/plays it with MPD.
 [![Gem Version](https://badge.fury.io/rb/vkpd.png)](http://badge.fury.io/rb/vkpd)
 
+##Run
     vkpd [options] [search request]
 
-#Requirements
+##Requirements
 
 vkpd requires mpc to work and sinatra to authenticate
 
-#Options
+##Options
 
     -c, --count=n
          Limit songs count
@@ -23,7 +27,7 @@ vkpd requires mpc to work and sinatra to authenticate
     add
          Add songs to current playlist instead of replacing it
 
-#Some examples
+##Some examples
     vkpd Beatles # replaces current mpd playlist with The Beatles' songs and starts playing
     vkpd play Beatles # the same
     vkpd add Beatles # adds found songs to playlist and starts playing
