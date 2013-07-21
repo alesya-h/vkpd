@@ -6,10 +6,6 @@ VKPD searches for music on social network vk.com and adds/plays it with MPD.
 ##Run
     vkpd [options] [search request]
 
-##Requirements
-
-vkpd requires mpc to work and sinatra to authenticate
-
 ##Options
 
     -c, --count=n
