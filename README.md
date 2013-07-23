@@ -4,6 +4,7 @@ VKPD searches for music on social network vk.com and adds/plays it with MPD.
 [![Gem Version](https://badge.fury.io/rb/vkpd.png)](http://badge.fury.io/rb/vkpd)
 
 ##Run
+    vkpd auth
     vkpd [options] [search request]
 
 ##Options
@@ -24,6 +25,7 @@ VKPD searches for music on social network vk.com and adds/plays it with MPD.
          Add songs to current playlist instead of replacing it
 
 ##Some examples
+    vkpd auth # authenticate vkpd in vk.com
     vkpd Beatles # replaces current mpd playlist with The Beatles' songs and starts playing
     vkpd play Beatles # the same
     vkpd add Beatles # adds found songs to playlist and starts playing
