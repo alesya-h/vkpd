@@ -1,14 +1,5 @@
 module Vkpd
   class CLI
-    # Reads config file, parses it as yaml and caches the result
-    def config
-      unless File.exist? Vkpd::config_path
-        puts 'Please authenticate. Start vkpd-auth.rb and point your browser to http://localhost.localdomain:4567/'
-        exit 1
-      end
-      @config ||= YAML.load File.read(Vkpd::config_path)
-    end
-  
     # main CLI method
     def main
       mpd = MPD.new 'localhost'
@@ -46,7 +37,7 @@ module Vkpd
           if !ARGV.empty? and ARGV.first.match(/^\d+$/)
             params['uid'] = ARGV.shift
           else
-            params['uid'] = config["user_id"]
+            params['uid'] = Vkpd::config["user_id"]
           end
         when 'group'
           method = 'audio.get'
@@ -67,7 +58,7 @@ module Vkpd
       end
   
   
-      params["access_token"]=config["access_token"]
+      params["access_token"]=Vkpd::config["access_token"]
       
       connection=Net::HTTP.new("api.vk.com",443)
       connection.use_ssl=true

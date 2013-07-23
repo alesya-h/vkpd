@@ -14,17 +14,19 @@ require 'vkpd/auth'
 module Vkpd
   APP_ID='2803517'
   
-  def self.config_path
-    @config_path ||= "#{ENV['HOME']}/.config/vkpd.yaml"
-  end
-
-  # Reads config file, parses it as yaml and caches the result
-  def config
-    unless File.exist? config_path
-      puts 'Please authenticate. Type `vkpd auth` and point your browser to http://localhost.localdomain:4567/'
-      exit 1
+  class <<self
+    def config_path
+      @config_path ||= "#{ENV['HOME']}/.config/vkpd.yaml"
     end
-    @config ||= YAML.load File.read(config_path)
+
+    # Reads config file, parses it as yaml and caches the result
+    def config
+      unless File.exist? config_path
+        puts 'Please authenticate. Type `vkpd auth` and point your browser to http://localhost.localdomain:4567/'
+        exit 1
+      end
+      @config ||= YAML.load File.read(config_path)
+    end
   end
 
 end
