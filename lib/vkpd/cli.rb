@@ -48,6 +48,10 @@ module Vkpd
         when '-nf','--no-fix', '--exact'
           params["auto_complete"] = '0'
         when 'auth'
+          Thread.new do
+            sleep 1
+            Launchy.open('http://localhost.localdomain:4567')
+          end
           Vkpd::Auth.run!
         when 'play'
           # do nothing

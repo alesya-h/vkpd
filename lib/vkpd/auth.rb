@@ -23,10 +23,9 @@ module Vkpd
       end
       Thread.new do
         sleep 0.5
-        puts "Authorized. Terminating now."
-        Kernel.exec("true")
+        Process.kill 'INT', Process.pid
       end
-      "authorized. now close me and go back to your term"
+      "<html><head><script>window.close()</script></head><body>Authorized. Now close me and go back to your term</body></html>"
     end
   end
 end

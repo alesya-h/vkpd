@@ -6,6 +6,7 @@ require 'yaml'
 require 'json'
 require 'pathname'
 require 'sinatra/base'
+require 'launchy'
 require 'ruby-mpd'
 require 'vkpd/version'
 require 'vkpd/cli'
@@ -22,8 +23,7 @@ module Vkpd
     # Reads config file, parses it as yaml and caches the result
     def config
       unless File.exist? config_path
-        puts 'Please authenticate. Type `vkpd auth` and point your browser to http://localhost.localdomain:4567/'
-        exit 1
+        system("vkpd auth 2>&1 >/dev/null")
       end
       @config ||= YAML.load File.read(config_path)
     end
