@@ -2,6 +2,7 @@
 
 VKPD searches for music on social network vk.com and adds/plays it with MPD.
 [![Gem Version](https://badge.fury.io/rb/vkpd.png)](http://badge.fury.io/rb/vkpd)
+[![Code Climate](https://codeclimate.com/github/alesguzik/vkpd.png)](https://codeclimate.com/github/alesguzik/vkpd)
 
 ##Run
     vkpd auth
