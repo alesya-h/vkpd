@@ -47,6 +47,8 @@ module Vkpd
           do_play = false
         when '-nf','--no-fix', '--exact'
           params["auto_complete"] = '0'
+        when '--https'
+          params['https'] = '1'
         when 'auth'
           Thread.new do
             sleep 1
