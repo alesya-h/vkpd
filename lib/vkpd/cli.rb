@@ -75,6 +75,7 @@ module Vkpd
       end
       mpd.clear if do_clear
       response.each do |song|
+        puts song if @debug
         mpd.add song["url"]
       end
       mpd.play if do_play
@@ -87,13 +88,5 @@ module Vkpd
       hash.map{|k,v| "#{k}=#{CGI.escape(v.to_s)}"}.join("&")
     end
 
-    # Run external command. In debug mode simply prints its arguments.
-    def run(*args)
-      if @debug
-        puts(*args)
-      else
-        system(*args)
-      end
-    end
   end
 end
