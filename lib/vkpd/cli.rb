@@ -21,8 +21,8 @@ module Vkpd
           filename = Pathname(__FILE__).dirname+'../../README'
           puts File.read(filename)
           exit 0
-        when '-d', '--debug'
-          @debug  = true
+        when '-v', '--verbose'
+          @verbose = true
         when '-c', '--count', /^--count=\d+$/
           value = current.include?("=") ? current.match(/=(.*)/)[1] : ARGV.shift
           params["count"]  = value
@@ -32,6 +32,10 @@ module Vkpd
         when '-s', '--sort', /^--sort=\d+$/
           value = current.include?("=") ? current.match(/=(.*)/)[1] : ARGV.shift
           params["sort"] = value
+        when '-nf','--no-fix', '--exact'
+          params["auto_complete"] = '0'
+        when '--https'
+          params['https'] = '1'
         when 'user'
           method = 'audio.get'
           if !ARGV.empty? and ARGV.first.match(/^\d+$/)
@@ -45,10 +49,6 @@ module Vkpd
         when 'add'
           do_clear = false
           do_play = false
-        when '-nf','--no-fix', '--exact'
-          params["auto_complete"] = '0'
-        when '--https'
-          params['https'] = '1'
         when 'auth'
           Thread.new do
             sleep 1
@@ -63,19 +63,15 @@ module Vkpd
         end
       end
   
-  
       params["access_token"]=Vkpd::config["access_token"]
       
-      connection=Net::HTTP.new("api.vk.com",443)
-      connection.use_ssl=true
-      data=connection.get("/method/#{method}?#{hash_to_params(params)}").body
-      response = JSON.parse(data)["response"]
+      response = make_vk_request(method,params)
       if method.match /search/
         response.shift
       end
       mpd.clear if do_clear
       response.each do |song|
-        puts song if @debug
+        puts song if @verbose
         mpd.add song["url"]
       end
       mpd.play if do_play
@@ -86,6 +82,26 @@ module Vkpd
     # Makes string with params for http request from hash
     def hash_to_params(hash)
       hash.map{|k,v| "#{k}=#{CGI.escape(v.to_s)}"}.join("&")
+    end
+
+    def make_vk_request(method, params)
+      connection=Net::HTTP.new("api.vk.com",443)
+      connection.use_ssl=true
+      data = JSON.parse connection.get("/method/#{method}?#{hash_to_params(params)}").body
+      p data if @verbose
+      while data['error'] and data['error']['error_code'].to_i == 14
+        p data['error'] if @verbose
+        captcha_sid = data['error']['captcha_sid']
+        captcha_img = data['error']['captcha_img']
+        system "display #{captcha_img} &"
+        print "captcha: "
+        captcha_key = gets.chomp
+        params['captcha_sid'] = captcha_sid
+        params['captcha_key'] = captcha_key
+        data = JSON.parse connection.get("/method/#{method}?#{hash_to_params(params)}").body
+        p data if @verbose
+      end
+      data["response"]
     end
 
   end
