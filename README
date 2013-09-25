@@ -8,6 +8,10 @@ Options:
        Drop first n results
   -s, --sort=n
        Sort by: 0 - popularity, 1 - length, 2 - upload date
+  -v, --verbose
+       Verbose output
+  -p, --mplayer
+       Use mplayer instead of mpd
   -nf, --no-fix, --exact
        Do not try to fix typos
   user [user_id]

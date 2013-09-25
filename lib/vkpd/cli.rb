@@ -9,6 +9,7 @@ module Vkpd
       do_clear = true
       do_play = true
       params["auto_complete"] = '1'
+      player = :mpd
   
       if ARGV.empty?
         ARGV.push "-h"
@@ -23,6 +24,8 @@ module Vkpd
           exit 0
         when '-v', '--verbose'
           @verbose = true
+        when '-p', '--mplayer'
+          player = :mplayer
         when '-c', '--count', /^--count=\d+$/
           value = current.include?("=") ? current.match(/=(.*)/)[1] : ARGV.shift
           params["count"]  = value
@@ -69,12 +72,20 @@ module Vkpd
       if method.match /search/
         response.shift
       end
-      mpd.clear if do_clear
-      response.each do |song|
-        puts song if @verbose
-        mpd.add song["url"]
+      case player
+      when :mpd
+        mpd.clear if do_clear
+        response.each do |song|
+          puts song if @verbose
+          mpd.add song["url"]
+        end
+        mpd.play if do_play
+      when :mplayer
+        response.each do |song|
+          puts song if @verbose
+          system "mplayer --cache=8192 --cache-min=2 #{song['url']}"
+        end
       end
-      mpd.play if do_play
     end
 
     private
