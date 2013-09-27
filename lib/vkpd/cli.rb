@@ -10,6 +10,7 @@ module Vkpd
       do_play = true
       params["auto_complete"] = '1'
       player = :mpd
+      random = false
   
       if ARGV.empty?
         ARGV.push "-h"
@@ -24,6 +25,8 @@ module Vkpd
           exit 0
         when '-v', '--verbose'
           @verbose = true
+        when '-r', '--random'
+          random = true
         when '-p', '--mplayer'
           player = :mplayer
         when '-c', '--count', /^--count=\d+$/
@@ -65,13 +68,16 @@ module Vkpd
           ARGV.clear
         end
       end
-  
+
       params["access_token"]=Vkpd::config["access_token"]
-      
+
       response = make_vk_request(method,params)
       if method.match /search/
         response.shift
       end
+
+      response = response.shuffle if random
+
       case player
       when :mpd
         mpd.clear if do_clear
@@ -81,9 +87,20 @@ module Vkpd
         end
         mpd.play if do_play
       when :mplayer
-        response.each do |song|
-          puts song if @verbose
-          system "mplayer --cache=8192 --cache-min=2 #{song['url']}"
+        catch :stop do
+          response.each do |song|
+            ap song
+            system "mplayer --cache=8192 --cache-min=2 #{song['url']}"
+            begin
+              Timeout::timeout 0.25 do
+                case key = STDIN.getch
+                when 'q' then throw :stop
+                end
+              end
+            rescue Timeout::Error
+              # do nothing
+            end
+          end
         end
       end
     end
