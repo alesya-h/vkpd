@@ -9,7 +9,7 @@ module Vkpd
       do_clear = true
       do_play = true
       params["auto_complete"] = '1'
-      player = ENV['VKPD_PLAYER'].to_sym || :mpd
+      player = ENV['VKPD_PLAYER'] || 'mpd'
       random = false
   
       if ARGV.empty?
@@ -29,7 +29,6 @@ module Vkpd
           random = true
         when '-p', '--player', /^--player=\w+$/
           player = current.include?("=") ? current.match(/=(.*)/)[1] : ARGV.shift
-          player = player.to_sym
         when '-c', '--count', /^--count=\d+$/
           value = current.include?("=") ? current.match(/=(.*)/)[1] : ARGV.shift
           params["count"]  = value
@@ -80,29 +79,17 @@ module Vkpd
       response = response.shuffle if random
 
       case player
-      when :mpd
+      when 'mpd'
         mpd.clear if do_clear
         response.each do |song|
           puts song if @verbose
           mpd.add song["url"]
         end
         mpd.play if do_play
-      when :mplayer, :mpv
-        catch :stop do
-          response.each do |song|
-            ap song
-            system "#{player} -cache 8192 -cache-min 2 #{song['url']}"
-            begin
-              Timeout::timeout 0.25 do
-                case key = STDIN.getch
-                when 'q' then throw :stop
-                end
-              end
-            rescue Timeout::Error
-              # do nothing
-            end
-          end
-        end
+      when 'mplayer', 'mpv'
+        with_playlist(response){|pls| system "#{player} -cache 8192 -cache-min 2 -playlist #{pls}" }
+      else # e.g. "vlc -I ncurses"
+        with_playlist(response){|pls| system "#{player} #{pls}" }
       end
     end
 
@@ -133,5 +120,23 @@ module Vkpd
       data["response"]
     end
 
+    def with_playlist(response)
+      file = Tempfile.new(['vkpd','.pls'])
+      write_playlist(file, response)
+      file.close
+      yield file.path
+    ensure
+      file.unlink
+    end
+
+    def write_playlist(f, response)
+      f.puts '[playlist]'
+      f.puts "NumberOfEntries=#{response.size}"
+      response.each_with_index do |song,i|
+        f.puts "File#{i+1}=#{song['url']}"
+        f.puts "Title#{i+1}=#{song['artist']} - #{song['title']}"
+        f.puts "Length#{i+1}=#{song['duration']}"
+      end
+    end
   end
 end
