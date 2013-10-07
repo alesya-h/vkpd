@@ -9,7 +9,7 @@ module Vkpd
       do_clear = true
       do_play = true
       params["auto_complete"] = '1'
-      player = :mpd
+      player = ENV['VKPD_PLAYER'].to_sym || :mpd
       random = false
   
       if ARGV.empty?
@@ -27,8 +27,9 @@ module Vkpd
           @verbose = true
         when '-r', '--random'
           random = true
-        when '-p', '--mplayer'
-          player = :mplayer
+        when '-p', '--player', /^--player=\w+$/
+          player = current.include?("=") ? current.match(/=(.*)/)[1] : ARGV.shift
+          player = player.to_sym
         when '-c', '--count', /^--count=\d+$/
           value = current.include?("=") ? current.match(/=(.*)/)[1] : ARGV.shift
           params["count"]  = value
@@ -86,11 +87,11 @@ module Vkpd
           mpd.add song["url"]
         end
         mpd.play if do_play
-      when :mplayer
+      when :mplayer, :mpv
         catch :stop do
           response.each do |song|
             ap song
-            system "mplayer --cache=8192 --cache-min=2 #{song['url']}"
+            system "#{player} -cache 8192 -cache-min 2 #{song['url']}"
             begin
               Timeout::timeout 0.25 do
                 case key = STDIN.getch
