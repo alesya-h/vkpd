@@ -88,7 +88,7 @@ module Vkpd
         mpd.play if do_play
       when 'mplayer', 'mpv'
         with_playlist(response){|pls| system "#{player} -cache 8192 -cache-min 2 -playlist #{pls}" }
-      else # e.g. "vlc -I ncurses"
+      else # e.g. nvlc
         with_playlist(response){|pls| system "#{player} #{pls}" }
       end
     end
