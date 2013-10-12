@@ -2,8 +2,6 @@ module Vkpd
   class CLI
     # main CLI method
     def main
-      mpd = MPD.new 'localhost'
-      mpd.connect
       method = "audio.search"
       params = {}
       do_clear = true
@@ -80,6 +78,8 @@ module Vkpd
 
       case player
       when 'mpd'
+        mpd = MPD.new 'localhost'
+        mpd.connect
         mpd.clear if do_clear
         response.each do |song|
           puts song if @verbose
