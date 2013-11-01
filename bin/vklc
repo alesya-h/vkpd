@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+ENV['VKPD_PLAYER'] = 'vlc'
+require 'vkpd'
+Vkpd::CLI.new.main
